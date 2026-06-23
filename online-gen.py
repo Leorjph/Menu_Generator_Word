@@ -22,7 +22,7 @@ if uploaded:
     text = uploaded.read().decode("utf-8")
         
     items = parse_text(StringIO(text))
-    output_doc = create_doc('/is_template.docx', items, scale)
+    output_doc = create_doc('/is_template.docx', items, scale=scale)
     print(f"\nSuccessfully generated {output_file_name}\n")
     
     output = BytesIO()
