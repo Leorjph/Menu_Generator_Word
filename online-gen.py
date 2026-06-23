@@ -18,20 +18,23 @@ scale = st.number_input(
     step=0.1,
 )
 
-if uploaded:
-    text = uploaded.read().decode("utf-8")
+if st.button("Generate Menu"):
+    if uploaded:
+        text = uploaded.read().decode("utf-8")
+            
+        items = parse_text(StringIO(text))
+        output_doc = create_doc('/is_template.docx', items, scale=scale)
+        print(f"\nSuccessfully generated {output_file_name}\n")
         
-    items = parse_text(StringIO(text))
-    output_doc = create_doc('/is_template.docx', items, scale=scale)
-    print(f"\nSuccessfully generated {output_file_name}\n")
-    
-    output = BytesIO()
-    output_doc.save(output)
-    output.seek(0)
-    
-    st.download_button(
-        "Download Menu",
-        output,
-        file_name=output_file_name,
-        mime = "application/vnd.openxmlformats-officedocuments.wordprocessingxml.document"
-    )
+        output = BytesIO()
+        output_doc.save(output)
+        output.seek(0)
+        
+        st.download_button(
+            "Download Menu",
+            output,
+            file_name=output_file_name,
+            mime = "application/vnd.openxmlformats-officedocuments.wordprocessingxml.document"
+        )
+    else:
+        st.error("Please upload a text file first")
