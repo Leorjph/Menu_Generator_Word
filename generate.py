@@ -11,18 +11,33 @@ textfile_path = 'menu.txt'
 template_path = './Templates'
 image_path = './Images'
 images = {'caution' : '/caution.png'}
-output_file_name = 'Menu-Iron_Skillet.docx'
+output_file_name = 'Menu.docx'
 io_folder = "./"
 
 TEXT_WIDTH = 6
 IMG_WIDTH = 7.6-TEXT_WIDTH
 
 FONT_PROFILES = {
-    'name_fr' : {'name' : 'Archivo Black', 'size' : 21, 'bold' : True, 'color' : RGBColor(255, 255, 255)},
-    'ingredients_fr' : {'name' : 'Times', 'size' : 12, 'bold' : True, 'color' : RGBColor(255, 255, 255)},
-    'name_en' : {'name' : 'Archivo Black', 'size' : 14, 'bold' : True, 'color' : RGBColor(255, 255, 255)},
-    'ingredients_en' : {'name' : 'Times', 'size' : 10, 'bold' : True, 'color' : RGBColor(255, 255, 255)},
-    'allergens' : {'name' : 'Calibri', 'size' : 10, 'bold' : True, 'color' : RGBColor(255, 0, 0)}
+    'iron_skillet' : {
+        'name_fr' : {'name' : 'Archivo Black', 'size' : 21, 'bold' : True, 'color' : RGBColor(0, 0, 0)},
+        'ingredients_fr' : {'name' : 'Times', 'size' : 12, 'bold' : True, 'color' : RGBColor(0, 0, 0)},
+        'name_en' : {'name' : 'Archivo Black', 'size' : 14, 'bold' : True, 'color' : RGBColor(0, 0, 0)},
+        'ingredients_en' : {'name' : 'Times', 'size' : 10, 'bold' : True, 'color' : RGBColor(0, 0, 0)},
+        'allergens' : {'name' : 'Calibri', 'size' : 10, 'bold' : True, 'color' : RGBColor(255, 0, 0)}
+    },
+    'true_balance' : {
+        'name_fr' : {'name' : 'Archivo Black', 'size' : 23, 'bold' : True, 'color' : RGBColor(1, 97, 153)},
+        'ingredients_fr' : {'name' : 'Times', 'size' : 13, 'bold' : True, 'color' : RGBColor(1, 97, 153)},
+        'name_en' : {'name' : 'Archivo Black', 'size' : 14, 'bold' : True, 'color' : RGBColor(1, 97, 153)},
+        'ingredients_en' : {'name' : 'Times', 'size' : 10, 'bold' : True, 'color' : RGBColor(1, 97, 153)},
+        'allergens' : {'name' : 'Calibri', 'size' : 10, 'bold' : True, 'color' : RGBColor(255, 0, 0)}
+    }
+}
+
+
+TEMPLATES = {
+    'iron_skillet' : '/is_template.docx',
+    'true_balance' : '/tb_template.docx'
 }
 
 
@@ -87,8 +102,8 @@ def set_table_indent(table, inches):
     table.autofit = False
 
 
-def apply_font_profile(run, profile_name, scale=1):
-    profile = FONT_PROFILES.get(profile_name)
+def apply_font_profile(run, profile_name, station_name='iron_skillet', scale=1):
+    profile = FONT_PROFILES[station_name].get(profile_name)
     if profile:
         run.font.name = profile['name']
         run.font.size = Pt(int(profile['size'] * scale))
@@ -107,8 +122,8 @@ def format_text_paragraphs(text_cell, add_para = True, spacing = Pt(10), space_b
     return text_para
 
 
-def create_doc(template_name, items, save=False, scale=1):
-    doc = Document(template_path + template_name)
+def create_doc(station_name, items, save=False, scale=1):
+    doc = Document(template_path + TEMPLATES[station_name])
 
     section = doc.sections[0]
     section.left_margin = Inches(1)
@@ -140,23 +155,23 @@ def create_doc(template_name, items, save=False, scale=1):
             p = format_text_paragraphs(text_cell, spacing = Pt(int(22 * scale)), add_para=False)
             name_fr = GoogleTranslator(source="en", target="fr").translate(item['name'])
             run = p.add_run(name_fr)
-            apply_font_profile(run, 'name_fr', scale=scale)
+            apply_font_profile(run, 'name_fr', scale=scale, station_name=station_name)
 
         if item['ingredients']:
             p = format_text_paragraphs(text_cell, spacing = Pt(int(13 * scale)))
             ingredients_fr = GoogleTranslator(source="en", target="fr").translate(item['ingredients'])
             run = p.add_run(ingredients_fr)
-            apply_font_profile(run, 'ingredients_fr', scale=scale)
+            apply_font_profile(run, 'ingredients_fr', scale=scale, station_name=station_name)
 
         if item['name']:
             p = format_text_paragraphs(text_cell, spacing = Pt(int(15 * scale)))
             run = p.add_run(item['name'])
-            apply_font_profile(run, 'name_en', scale=scale)
+            apply_font_profile(run, 'name_en', scale=scale, station_name=station_name)
 
         if item['ingredients']:
             p = format_text_paragraphs(text_cell, spacing = Pt(int(11 * scale)))
             run = p.add_run(item['ingredients'])
-            apply_font_profile(run, 'ingredients_en', scale=scale)
+            apply_font_profile(run, 'ingredients_en', scale=scale, station_name=station_name)
         
         if item['allergens']:
             inner_table = text_cell.add_table(rows=1, cols=2)
@@ -177,7 +192,7 @@ def create_doc(template_name, items, save=False, scale=1):
             allergens = item['allergens']
             allergens_fr = GoogleTranslator(source="en", target="fr").translate(allergens)
             run = p.add_run(f'{allergens} / {allergens_fr}')
-            apply_font_profile(run, 'allergens', scale=scale)
+            apply_font_profile(run, 'allergens', scale=scale, station_name=station_name)
 
         if item['tags']:
             add_tags(image_cell, item['tags'], text_cell, scale=scale)
@@ -216,5 +231,6 @@ def add_tags(cell, tags, text_cell, scale=1):
 
 if __name__ == '__main__':
     items = parse_text()
-    create_doc('/is_template.docx', items, save=True)
+    station_name = 'iron_skillet'
+    create_doc(station_name, items, save=True)
     print(f"\nSuccessfully generated {output_file_name}\n")
