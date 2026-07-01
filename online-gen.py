@@ -10,6 +10,17 @@ uploaded = st.file_uploader(
     type=["txt"]
 )
 
+stations = {
+    'Iron Skillet' : 'iron_skillet',
+    'True Balance' : 'true_balance'
+}
+
+station_name = st.selectbox(
+    "Select station: ",
+    list(stations.keys()),
+    index=1
+)
+
 scale = st.number_input(
     "Scale",
     min_value=0.1,
@@ -18,23 +29,21 @@ scale = st.number_input(
     step=0.1,
 )
 
-if st.button("Generate Menu"):
-    if uploaded:
-        text = uploaded.read().decode("utf-8")
-            
-        items = parse_text(StringIO(text))
-        output_doc = create_doc('/is_template.docx', items, scale=scale)
-        print(f"\nSuccessfully generated {output_file_name}\n")
+if uploaded:
+    text = uploaded.read().decode("utf-8")
+    station_name = stations[station_name]
         
-        output = BytesIO()
-        output_doc.save(output)
-        output.seek(0)
-        
-        st.download_button(
-            "Download Menu",
-            output,
-            file_name=output_file_name,
-            mime = "application/vnd.openxmlformats-officedocuments.wordprocessingxml.document"
-        )
-    else:
-        st.error("Please upload a text file first")
+    items = parse_text(StringIO(text))
+    output_doc = create_doc(station_name, items, scale)
+    print(f"\nSuccessfully generated {output_file_name}\n")
+    
+    output = BytesIO()
+    output_doc.save(output)
+    output.seek(0)
+    
+    st.download_button(
+        "Download Menu",
+        output,
+        file_name=output_file_name,
+        mime = "application/vnd.openxmlformats-officedocuments.wordprocessingxml.document"
+    )
