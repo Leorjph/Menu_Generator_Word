@@ -66,10 +66,10 @@ with st.sidebar.expander("? - Help"):
 
     with st.expander("Example item"):
         st.markdown('''
-            1. Bean Stew
-            Red and black beans, peppers, onions, tomato, spices
-            v, mb
-            -
+            1. Bean Stew  
+            Red and black beans, peppers, onions, tomato, spices  
+            v, mb  
+            \-
         ''')
     
     with st.expander("Tags List"):
@@ -85,8 +85,8 @@ with st.sidebar.expander("? - Help"):
             
         with icons:
             st.subheader("Icon")
-            st.image(image_path + TAGS['v'], width=20)
-            st.image(image_path + TAGS['veg'], width=20)
-            st.image(image_path + TAGS['ew'], width=20)
-            st.image(image_path + TAGS['h'], width=20)
-            st.image(image_path + TAGS['lc'], width=20)
+            st.image(image_path + TAGS['v'], width=40)
+            st.image(image_path + TAGS['veg'], width=40)
+            st.image(image_path + TAGS['ew'], width=40)
+            st.image(image_path + TAGS['h'], width=40)
+            st.image(image_path + TAGS['lc'], width=40)
