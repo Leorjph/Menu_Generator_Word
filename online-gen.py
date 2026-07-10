@@ -56,9 +56,9 @@ with st.sidebar.expander("? - Help"):
     st.markdown('''
     Each item consists of 4 lines-
     
-    1. Item name
-    Ingredients
-    Tags (Commma-separated)
+    1. Item name  
+    Ingredients  
+    Tags (Commma-separated)  
     Allergen notes
     
     Use '-' in any column other than name to leave it empty
