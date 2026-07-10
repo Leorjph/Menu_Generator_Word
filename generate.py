@@ -140,7 +140,7 @@ def format_text_paragraphs(text_cell, add_para = True, spacing = Pt(10), space_b
     return text_para
 
 
-def styleDocument(doc, type='default', hasTags=True):
+def styleDocument(doc, items, type='default', hasTags=True):
 
     section = doc.sections[0]
     
@@ -185,10 +185,10 @@ def create_doc(station_name, items, save=False, scale=1):
     hasTags = True
     if station_name == 'motd':
         hasTags = False
-        table = styleDocument(doc, type='motd', hasTags=hasTags)
+        table = styleDocument(doc, items, type='motd', hasTags=hasTags)
         alignment = 'center'
     else:
-        table = styleDocument(doc)
+        table = styleDocument(doc, items)
         alignment = 'left'
 
     for i, item in enumerate(items):
