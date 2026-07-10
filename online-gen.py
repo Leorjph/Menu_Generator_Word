@@ -54,27 +54,24 @@ if st.button("Generate Menu"):
 with st.sidebar.expander("? - Help"):
     st.subheader("Text file format")
     st.write("Each item consists for 4 lines-\n")
-    st.write("1. Item name")
-    st.write("Ingredients")
-    st.write("Tags (Comma-separated)")
-    st.write("Allergen note")
+    st.write("1. Item name \nIngredients \nTags (Comma-separated) \nAllergen notes")
     st.write("\n Use '-' in any column other than name to leave it empty\n\n")
     
-    st.subheader("Tags List")
-    tags, icons = st.columns(2)
-    
-    with tags:
-        st.subheader("Tag")
-        st.write('Vegan / v')
-        st.write('Vegetarian / veg')
-        st.write('Eat well / EW / MB')
-        st.write('Halal / H')
-        st.write('Low carbon / LC / FE')
+    with st.expander("Tags List"):
+        tags, icons = st.columns(2)
         
-    with icons:
-        st.subheader("Icon")
-        st.image(image_path + TAGS['v'])
-        st.image(image_path + TAGS['veg'])
-        st.image(image_path + TAGS['ew'])
-        st.image(image_path + TAGS['h'])
-        st.image(image_path + TAGS['lc'])
+        with tags:
+            st.subheader("Tag")
+            st.write('Vegan / v')
+            st.write('Vegetarian / veg')
+            st.write('Eat well / EW / MB')
+            st.write('Halal / H')
+            st.write('Low carbon / LC / FE')
+            
+        with icons:
+            st.subheader("Icon")
+            st.image(image_path + TAGS['v'], width=100)
+            st.image(image_path + TAGS['veg'], width=100)
+            st.image(image_path + TAGS['ew'], width=100)
+            st.image(image_path + TAGS['h'], width=100)
+            st.image(image_path + TAGS['lc'], width=100)
