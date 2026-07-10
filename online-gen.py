@@ -56,7 +56,7 @@ with st.sidebar.expander("? - Help"):
     st.markdown('''
     Each item consists of 4 lines-
     
-    Item number. Item name  
+    Item no. Item name  
     Ingredients  
     Tags (Commma-separated)  
     Allergen notes
@@ -69,7 +69,7 @@ with st.sidebar.expander("? - Help"):
         1. Bean Stew  
         Beans and stuff  
         v, mb  
-        \-  
+        Contains: Lactose  
         ''')
     
     with st.expander("Tags List"):
