@@ -53,12 +53,16 @@ if st.button("Generate Menu"):
 
 with st.sidebar.expander("? - Help"):
     st.subheader("Text file format")
-    st.write("Each item consists for 4 lines-<br>")
-    st.write("1. Item name")
-    st.write("Ingredients")
-    st.write("Tags (Comma-separated)")
-    st.write("Allergen note")
-    st.write("<br> Use '-' in any column other than name to leave it empty\n\n")
+    st.markdown('''
+    Each item consists of 4 lines-
+    
+    1. Item name
+    Ingredients
+    Tags (Commma-separated)
+    Allergen notes
+    
+    Use '-' in any column other than name to leave it empty
+    ''')
     
     with st.expander("Tags List"):
         tags, icons = st.columns(2)
@@ -73,8 +77,8 @@ with st.sidebar.expander("? - Help"):
             
         with icons:
             st.subheader("Icon")
-            st.image(image_path + TAGS['v'], width=20)
-            st.image(image_path + TAGS['veg'], width=20)
-            st.image(image_path + TAGS['ew'], width=20)
-            st.image(image_path + TAGS['h'], width=20)
-            st.image(image_path + TAGS['lc'], width=20)
+            st.image(image_path + TAGS['v'], width=100)
+            st.image(image_path + TAGS['veg'], width=100)
+            st.image(image_path + TAGS['ew'], width=100)
+            st.image(image_path + TAGS['h'], width=100)
+            st.image(image_path + TAGS['lc'], width=100)
