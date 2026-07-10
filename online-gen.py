@@ -56,13 +56,21 @@ with st.sidebar.expander("? - Help"):
     st.markdown('''
     Each item consists of 4 lines-
     
-    1. Item name  
+    Item number. Item name  
     Ingredients  
     Tags (Commma-separated)  
     Allergen notes
     
     Use '-' in any column other than name to leave it empty
     ''')
+
+    with st.expander("Example item"):
+        st.markdown('''
+            1. Bean Stew
+            Red and black beans, peppers, onions, tomato, spices
+            v, mb
+            -
+        ''')
     
     with st.expander("Tags List"):
         tags, icons = st.columns(2)
@@ -77,8 +85,8 @@ with st.sidebar.expander("? - Help"):
             
         with icons:
             st.subheader("Icon")
-            st.image(image_path + TAGS['v'], width=100)
-            st.image(image_path + TAGS['veg'], width=100)
-            st.image(image_path + TAGS['ew'], width=100)
-            st.image(image_path + TAGS['h'], width=100)
-            st.image(image_path + TAGS['lc'], width=100)
+            st.image(image_path + TAGS['v'], width=20)
+            st.image(image_path + TAGS['veg'], width=20)
+            st.image(image_path + TAGS['ew'], width=20)
+            st.image(image_path + TAGS['h'], width=20)
+            st.image(image_path + TAGS['lc'], width=20)
