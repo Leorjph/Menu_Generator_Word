@@ -61,7 +61,7 @@ with st.sidebar.expander("? - Help"):
     Tags (Commma-separated)  
     Allergen notes
     
-    Use '-' in any column other than name to leave it empty
+    Use '-' in any column other than name to leave it empty  
     Note: 'Menu of the Day' does not support tags
     ''')
 
