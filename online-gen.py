@@ -36,7 +36,6 @@ if st.button("Generate Menu"):
             
         items = parse_text(StringIO(text))
         output_doc = create_doc(station_name, items, scale)
-        print(f"\nSuccessfully generated {output_file_name}\n")
         
         output = BytesIO()
         output_doc.save(output)
