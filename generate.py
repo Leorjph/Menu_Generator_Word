@@ -1,5 +1,6 @@
 from docx import Document
 from docx.shared import Inches, Pt, RGBColor
+from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
 from io import StringIO
@@ -31,13 +32,27 @@ FONT_PROFILES = {
         'name_en' : {'name' : 'Archivo Black', 'size' : 14, 'bold' : True, 'color' : RGBColor(1, 97, 153)},
         'ingredients_en' : {'name' : 'Times', 'size' : 10, 'bold' : True, 'color' : RGBColor(1, 97, 153)},
         'allergens' : {'name' : 'Calibri', 'size' : 10, 'bold' : True, 'color' : RGBColor(255, 0, 0)}
+    },
+    'motd' : {
+        'name_fr' : {'name' : 'Poppins', 'size' : 15, 'bold' : True, 'color' : RGBColor(26, 78, 61)},
+        'ingredients_fr' : {'name' : 'Poppins', 'size' : 11, 'bold' : False, 'color' : RGBColor(26, 78, 61)},
+        'name_en' : {'name' : 'Poppins', 'size' : 11, 'bold' : True, 'color' : RGBColor(0, 0, 0)},
+        'ingredients_en' : {'name' : 'Poppins', 'size' : 8, 'bold' : False, 'color' : RGBColor(0, 0, 0)},
+        'allergens' : {'name' : 'Poppins', 'size' : 8, 'bold' : False, 'color' : RGBColor(255, 0, 0)}
     }
 }
 
 
 TEMPLATES = {
     'iron_skillet' : '/is_template.docx',
-    'true_balance' : '/tb_template.docx'
+    'true_balance' : '/tb_template.docx',
+    'motd' : '/motd_template.docx'
+}
+
+
+ALIGNMENT = {
+    'default' : {'text_width' : 6, 'img_width' : 1.6},
+    'motd' : {'text_width' : 3.5, 'img_width' : 1}
 }
 
 
@@ -111,7 +126,7 @@ def apply_font_profile(run, profile_name, station_name='iron_skillet', scale=1):
         run.font.color.rgb = profile['color']
         
         
-def format_text_paragraphs(text_cell, add_para = True, spacing = Pt(10), space_before = Pt(5), space_after = Pt(5)):
+def format_text_paragraphs(text_cell, add_para = True, spacing = Pt(10), space_before = Pt(5), space_after = Pt(5), alignment='left'):
     if add_para:
         text_para = text_cell.add_paragraph()
     else:
@@ -119,82 +134,126 @@ def format_text_paragraphs(text_cell, add_para = True, spacing = Pt(10), space_b
     text_para.paragraph_format.line_spacing = spacing
     text_para.paragraph_format.space_before = space_before
     text_para.paragraph_format.space_after = space_after
+    
+    if alignment == 'center':
+        text_para.alignment = WD_ALIGN_PARAGRAPH.CENTER
     return text_para
+
+
+def styleDocument(doc, type='default', hasTags=True):
+
+    section = doc.sections[0]
+    
+    if type == 'default':
+        section.left_margin = Inches(1)
+        section.right_margin = Inches(1)
+        section.top_margin = Inches(0.85)
+        section.bottom_margin = Inches(0.9)
+    elif type == 'motd':
+        section.left_margin = Inches(0.7)
+        section.right_margin = Inches(1.8)
+        section.top_margin = Inches(0.85)
+        section.bottom_margin = Inches(0.9)
+    
+    style = doc.styles['normal']
+
+    if hasTags:
+        table = doc.add_table(rows=len(items)+1, cols=2)
+        set_table_indent(table, -0.5)
+
+        text_width = ALIGNMENT[type]['text_width']
+        img_width = ALIGNMENT[type]['img_width']
+        # Column 1 for the text
+        table.columns[0].width = Inches(text_width)
+        for cell in table.columns[0].cells:
+            cell.width = Inches(text_width)
+        # Colume 2 for the label images
+        table.columns[1].width = Inches(img_width)
+        for cell in table.columns[1].cells:
+            cell.width = Inches(img_width)
+    else:
+        table = doc.add_table(rows=len(items)+1, cols=1)
+        text_width = ALIGNMENT[type]['text_width'] + ALIGNMENT[type]['img_width']
+        table.columns[0].width = Inches(text_width)
+        set_table_indent(table, 0.5)
+    return table
 
 
 def create_doc(station_name, items, save=False, scale=1):
     doc = Document(template_path + TEMPLATES[station_name])
 
-    section = doc.sections[0]
-    section.left_margin = Inches(1)
-    section.right_margin = Inches(1)
-    section.top_margin = Inches(0.85)
-    section.bottom_margin = Inches(0.9)
-
-    style = doc.styles['normal']
-
-    table = doc.add_table(rows=len(items)+1, cols=2)
-    set_table_indent(table, -0.5)
-
-    # Column 1 for the text
-    table.columns[0].width = Inches(TEXT_WIDTH)
-    for cell in table.columns[0].cells:
-        cell.width = Inches(TEXT_WIDTH)
-    # Colume 2 for the label images
-    table.columns[1].width = Inches(IMG_WIDTH)
-    for cell in table.columns[1].cells:
-        cell.width = Inches(IMG_WIDTH)
-
+    hasTags = True
+    if station_name == 'motd':
+        hasTags = False
+        table = styleDocument(doc, type='motd', hasTags=hasTags)
+        alignment = 'center'
+    else:
+        table = styleDocument(doc)
+        alignment = 'left'
 
     for i, item in enumerate(items):
         text_cell = table.cell(i+1, 0)
-        image_cell = table.cell(i+1, 1)
+        if hasTags:
+            image_cell = table.cell(i+1, 1)
         print(f"Generating item {i+1}")
 
         if item['name']:
-            p = format_text_paragraphs(text_cell, spacing = Pt(int(22 * scale)), add_para=False)
-            name_fr = GoogleTranslator(source="en", target="fr").translate(item['name'])
+            p = format_text_paragraphs(text_cell, spacing = Pt(int(22 * scale)), add_para=False, alignment=alignment)
+            name_fr = GoogleTranslator(source="auto", target="fr").translate(item['name'])
             run = p.add_run(name_fr)
             apply_font_profile(run, 'name_fr', scale=scale, station_name=station_name)
 
+        if station_name == 'motd':
+            if item['name']:
+                p = format_text_paragraphs(text_cell, spacing = Pt(int(15 * scale)), alignment=alignment)
+                name_en = GoogleTranslator(source="auto", target="en").translate(item['name'])
+                run = p.add_run(name_en)
+                apply_font_profile(run, 'name_en', scale=scale, station_name=station_name)
+                
         if item['ingredients']:
-            p = format_text_paragraphs(text_cell, spacing = Pt(int(13 * scale)))
-            ingredients_fr = GoogleTranslator(source="en", target="fr").translate(item['ingredients'])
+            p = format_text_paragraphs(text_cell, spacing = Pt(int(13 * scale)), alignment=alignment)
+            ingredients_fr = GoogleTranslator(source="auto", target="fr").translate(item['ingredients'])
             run = p.add_run(ingredients_fr)
             apply_font_profile(run, 'ingredients_fr', scale=scale, station_name=station_name)
 
-        if item['name']:
-            p = format_text_paragraphs(text_cell, spacing = Pt(int(15 * scale)))
-            run = p.add_run(item['name'])
-            apply_font_profile(run, 'name_en', scale=scale, station_name=station_name)
+        if station_name != 'motd':
+            if item['name']:
+                p = format_text_paragraphs(text_cell, spacing = Pt(int(15 * scale)), alignment=alignment)
+                name_en = GoogleTranslator(source="auto", target="en").translate(item['name'])
+                run = p.add_run(name_en)
+                apply_font_profile(run, 'name_en', scale=scale, station_name=station_name)
 
         if item['ingredients']:
-            p = format_text_paragraphs(text_cell, spacing = Pt(int(11 * scale)))
-            run = p.add_run(item['ingredients'])
+            p = format_text_paragraphs(text_cell, spacing = Pt(int(11 * scale)), alignment=alignment)
+            ingredients_en = GoogleTranslator(source="auto", target="en").translate(item['ingredients'])
+            run = p.add_run(ingredients_en)
             apply_font_profile(run, 'ingredients_en', scale=scale, station_name=station_name)
         
         if item['allergens']:
-            inner_table = text_cell.add_table(rows=1, cols=2)
-            
-            inner_table.columns[0].width = Inches(0.3)
-            for cell in inner_table.columns[0].cells:
-                cell.width = Inches(0.3)
-            inner_table.columns[1].width = Inches(TEXT_WIDTH-0.3)
-            for cell in inner_table.columns[1].cells:
-                cell.width = Inches(TEXT_WIDTH-0.3)
-            
-            p = format_text_paragraphs(inner_table.cell(0, 0), add_para = False)
-            run = p.add_run()
-            run.add_picture(image_path + images['caution'], width=Inches(0.2 * scale))
-            
-            p = format_text_paragraphs(inner_table.cell(0, 1), add_para = False, spacing = Pt(int(10 * scale)))
+            if hasTags:
+                inner_table = text_cell.add_table(rows=1, cols=2)
+                
+                inner_table.columns[0].width = Inches(0.3)
+                for cell in inner_table.columns[0].cells:
+                    cell.width = Inches(0.3)
+                inner_table.columns[1].width = Inches(TEXT_WIDTH-0.3)
+                for cell in inner_table.columns[1].cells:
+                    cell.width = Inches(TEXT_WIDTH-0.3)
+                
+                p = format_text_paragraphs(inner_table.cell(0, 0), add_para = False, alignment=alignment)
+                run = p.add_run()
+                run.add_picture(image_path + images['caution'], width=Inches(0.2 * scale))
+                
+                p = format_text_paragraphs(inner_table.cell(0, 1), add_para = False, spacing = Pt(int(10 * scale)), alignment=alignment)
+            else:
+                p = format_text_paragraphs(text_cell, spacing = Pt(int(11 * scale)), alignment=alignment)
             run = p.add_run()
             allergens = item['allergens']
             allergens_fr = GoogleTranslator(source="en", target="fr").translate(allergens)
             run = p.add_run(f'{allergens} / {allergens_fr}')
             apply_font_profile(run, 'allergens', scale=scale, station_name=station_name)
 
-        if item['tags']:
+        if hasTags and item['tags']:
             add_tags(image_cell, item['tags'], text_cell, scale=scale)
 
     if save:
@@ -231,6 +290,6 @@ def add_tags(cell, tags, text_cell, scale=1):
 
 if __name__ == '__main__':
     items = parse_text()
-    station_name = 'iron_skillet'
+    station_name = 'motd'
     create_doc(station_name, items, save=True)
     print(f"\nSuccessfully generated {output_file_name}\n")
