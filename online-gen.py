@@ -63,7 +63,7 @@ with st.sidebar.expander("? - Help"):
     st.subheader("Tags List")
     tags, icons = st.columns(2)
     
-    with col1:
+    with tags:
         st.subheader("Tag")
         st.write('Vegan / v')
         st.write('Vegetarian / veg')
@@ -71,7 +71,7 @@ with st.sidebar.expander("? - Help"):
         st.write('Halal / H')
         st.write('Low carbon / LC / FE')
         
-    with col2:
+    with icons:
         st.subheader("Icon")
         st.image(image_path + TAGS['v'])
         st.image(image_path + TAGS['veg'])
