@@ -65,10 +65,12 @@ with st.sidebar.expander("? - Help"):
     ''')
 
     with st.expander("Example item"):
-        st.write("1. Bean Stew")
-        st.write("Beans and stuff")
-        st.write("v, mb")
-        st.write("-")
+        st.markdown('''
+        1. Bean Stew  
+        Beans and stuff  
+        v, mb  
+        \-  
+        ''')
     
     with st.expander("Tags List"):
         tags, icons = st.columns(2)
