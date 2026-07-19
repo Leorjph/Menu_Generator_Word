@@ -64,8 +64,8 @@ with st.sidebar.expander("? - Help"):
     Line 4. **Allergen notes**
     
     Use '-' in any column other than name to leave it empty  
-    Can be written in any language
-    Review final menu because misspellings can result in poor translation
+    Can be written in any language  
+    Review final menu because misspellings can result in poor translation  
     Note: 'Menu of the Day' does not support tags
     ''')
 
