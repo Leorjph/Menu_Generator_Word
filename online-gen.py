@@ -82,11 +82,11 @@ with st.sidebar.expander("? - Help"):
         
         with tags:
             st.subheader("Tag")
-            st.write('Vegan / v')
-            st.write('Vegetarian / veg')
-            st.write('Eat well / EW / MB')
-            st.write('Halal / H')
-            st.write('Low carbon / LC / FE')
+            st.write('Vegan / v\n')
+            st.write('Vegetarian / veg\n')
+            st.write('Eat well / EW / MB\n')
+            st.write('Halal / H\n')
+            st.write('Low carbon / LC / FE\n')
             
         with icons:
             st.subheader("Icon")
