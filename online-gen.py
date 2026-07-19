@@ -73,7 +73,7 @@ with st.sidebar.expander("? - Help"):
         st.markdown('''
         1. Bean Stew  
         Beans and stuff  
-        vegan, lc
+        vegan, lc  
         Contains: Lactose  
         ''')
     
@@ -90,8 +90,8 @@ with st.sidebar.expander("? - Help"):
             
         with icons:
             st.subheader("Icon")
-            st.image(image_path + TAGS['v'], width=35)
-            st.image(image_path + TAGS['veg'], width=35)
-            st.image(image_path + TAGS['ew'], width=35)
-            st.image(image_path + TAGS['h'], width=35)
-            st.image(image_path + TAGS['lc'], width=35)
+            st.image(image_path + TAGS['v'], width=25)
+            st.image(image_path + TAGS['veg'], width=25)
+            st.image(image_path + TAGS['ew'], width=25)
+            st.image(image_path + TAGS['h'], width=25)
+            st.image(image_path + TAGS['lc'], width=25)
