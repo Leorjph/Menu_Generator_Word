@@ -3,6 +3,7 @@ from generate import parse_text, create_doc, image_path, TAGS
 from io import BytesIO, StringIO
 
 st.title("Text to Docx Menu Generator")
+filename = None
 
 uploaded = st.file_uploader(
     "Upload text file",
@@ -33,6 +34,7 @@ if st.button("Generate Menu"):
     if uploaded:
         text = uploaded.read().decode("utf-8")
         station_name = stations[station_name]
+        filename = uploaded.name
             
         items = parse_text(StringIO(text))
         output_doc = create_doc(station_name, items, scale)
@@ -44,7 +46,7 @@ if st.button("Generate Menu"):
         st.download_button(
             "Download Menu",
             output,
-            file_name="Menu_" + station_name + ".docx",
+            file_name = filename + " - " + station_name + ".docx",
             mime = "application/vnd.openxmlformats-officedocuments.wordprocessingxml.document"
         )
     else:
@@ -56,12 +58,14 @@ with st.sidebar.expander("? - Help"):
     st.markdown('''
     Each item consists of 4 lines-
     
-    Item no. Item name  
-    Ingredients  
-    Tags (Commma-separated)  
-    Allergen notes
+    **Item no. Item name**  
+    **Ingredients**
+    **Tags (Comma-separated)**  
+    **Allergen notes**
     
     Use '-' in any column other than name to leave it empty  
+    Can be written in any language
+    Review final menu because misspellings can result in poor translation
     Note: 'Menu of the Day' does not support tags
     ''')
 
@@ -69,7 +73,7 @@ with st.sidebar.expander("? - Help"):
         st.markdown('''
         1. Bean Stew  
         Beans and stuff  
-        v, mb  
+        vegan, lc
         Contains: Lactose  
         ''')
     
