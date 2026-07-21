@@ -114,16 +114,16 @@ with st.sidebar.expander("? - Help / Aide"):
         
         with tags:
             st.subheader("Tag")
-            st.write('Vegan / v\n')
-            st.write('Vegetarian / veg\n')
-            st.write('Eat well / EW / MB\n')
-            st.write('Halal / H\n')
-            st.write('Low carbon / LC / FE\n')
+            st.write('Vegan / v\n\n\n')
+            st.write('Vegetarian / veg\n\n\n')
+            st.write('Eat well / EW / MB\n\n\n')
+            st.write('Halal / H\n\n\n')
+            st.write('Low carbon / LC / FE\n\n\n')
             
         with icons:
             st.subheader("Icon")
-            st.image(image_path + TAGS['v'], width=25)
-            st.image(image_path + TAGS['veg'], width=25)
-            st.image(image_path + TAGS['ew'], width=25)
-            st.image(image_path + TAGS['h'], width=25)
-            st.image(image_path + TAGS['lc'], width=25)
+            st.image(image_path + TAGS['v'], width=75)
+            st.image(image_path + TAGS['veg'], width=75)
+            st.image(image_path + TAGS['ew'], width=75)
+            st.image(image_path + TAGS['h'], width=75)
+            st.image(image_path + TAGS['lc'], width=75)
