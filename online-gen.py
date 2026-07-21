@@ -53,29 +53,61 @@ if st.button("Generate Menu"):
         st.error("Please upload a text file first")
 
 
-with st.sidebar.expander("? - Help"):
-    st.subheader("Text file format")
-    st.markdown('''
-    Each item consists of 4 lines-
-    
-    Line 1. **Item no. Item name**  
-    Line 2. **Ingredients**  
-    Line 3. **Tags (Comma-separated)**  
-    Line 4. **Allergen notes**
-    
-    Use '-' in any column other than name to leave it empty  
-    Can be written in any language  
-    Review final menu because misspellings can result in poor translation  
-    Note: 'Menu of the Day' does not support tags
-    ''')
+with st.sidebar.expander("? - Help / Aide"):
+    language = st.segmented_control(
+        "Language",
+        ["English", "Français"],
+        default = "English"
+    )
 
-    with st.expander("Example item"):
+    if language == "English":
+        st.subheader("Text file format")
         st.markdown('''
-        1. Bean Stew  
-        Beans and stuff  
-        vegan, lc  
-        Contains: Lactose  
+        Each item consists of 4 lines-
+        
+        Line 1. **Item no. Item name**  
+        Line 2. **Ingredients**  
+        Line 3. **Tags (Comma-separated)**  
+        Line 4. **Allergen notes**
+        
+        Use '-' in any column other than name to leave it empty  
+        Can be written in any language  
+        Review final menu because misspellings can result in poor translation    
+        View all tags by clicking on the "Tags List" section below
+        Note: 'Menu of the Day' does not support tags
         ''')
+    
+        with st.expander("Example item"):
+            st.markdown('''
+            1. Bean Stew  
+            Beans and stuff  
+            vegan, lc  
+            Contains: Lactose  
+            ''')
+    elif language == "Français":
+        st.subheader("Format de fichier texte")
+        st.markdown('''
+        Chaque élément comporte 4 lignes:
+        
+        Ligne 1. **Numéro de l’élément. Nom de l’élément**  
+        Ligne 2. **Ingrédients**  
+        Ligne 3. **Attributs (séparées par des virgules)**  
+        Ligne 4. **Notes sur les allergènes**
+        
+        Utilisez «-» dans toute colonne autre que le nom pour la laisser vide  
+        Le texte peut être dans n'importe quelle langue  
+        Vérifiez le menu final, car les fautes d’orthographe peuvent entraîner une mauvaise traduction    
+        Consultez tous les attributs en cliquant sur la section «Tags List» ci-dessous
+        Note: Le «Menu du jour» ne prend pas en charge les attributs
+        ''')
+    
+        with st.expander("Exemple d'élément"):
+            st.markdown('''
+            1. Ragoût de fèves  
+            Des fèves et tout ça  
+            vegan, lc  
+            Contient: lactose  
+            ''')
     
     with st.expander("Tags List"):
         tags, icons = st.columns(2)
