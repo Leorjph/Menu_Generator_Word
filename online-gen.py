@@ -138,8 +138,8 @@ with st.sidebar.expander("? - Help / Aide"):
             
         with icons:
             st.subheader("Icon")
-            st.image(image_path + TAGS['v'], width=75)
-            st.image(image_path + TAGS['veg'], width=75)
-            st.image(image_path + TAGS['ew'], width=75)
-            st.image(image_path + TAGS['h'], width=75)
-            st.image(image_path + TAGS['lc'], width=75)
+            st.image(image_path + TAGS['v'], width=65)
+            st.image(image_path + TAGS['veg'], width=65)
+            st.image(image_path + TAGS['ew'], width=65)
+            st.image(image_path + TAGS['h'], width=65)
+            st.image(image_path + TAGS['lc'], width=65)
