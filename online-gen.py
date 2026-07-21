@@ -70,11 +70,11 @@ with st.sidebar.expander("? - Help / Aide"):
         Line 3. **Tags (Comma-separated)**  
         Line 4. **Allergen notes**
         
-        Use '-' in any column other than name to leave it empty  
-        Can be written in any language  
-        Review final menu because misspellings can result in poor translation    
-        View all tags by clicking on the "Tags List" section below
-        Note: 'Menu of the Day' does not support tags
+        Use '-' in any column other than name to leave it empty.  
+        Can be written in any language.  
+        Review final menu because misspellings can result in poor translation.    
+        View all tags by clicking on the "Tags List" section below.    
+        Note: 'Menu of the Day' does not support tags.
         ''')
     
         with st.expander("Example item"):
@@ -94,11 +94,11 @@ with st.sidebar.expander("? - Help / Aide"):
         Ligne 3. **Attributs (séparées par des virgules)**  
         Ligne 4. **Notes sur les allergènes**
         
-        Utilisez «-» dans toute colonne autre que le nom pour la laisser vide  
-        Le texte peut être dans n'importe quelle langue  
-        Vérifiez le menu final, car les fautes d’orthographe peuvent entraîner une mauvaise traduction    
-        Consultez tous les attributs en cliquant sur la section «Tags List» ci-dessous
-        Note: Le «Menu du jour» ne prend pas en charge les attributs
+        Utilisez «-» dans toute colonne autre que le nom pour la laisser vide.  
+        Le texte peut être dans n'importe quelle langue.  
+        Vérifiez le menu final, car les fautes d’orthographe peuvent entraîner une mauvaise traduction.    
+        Consultez tous les attributs en cliquant sur la section «Tags List» ci-dessous.    
+        Note: Le «Menu du jour» ne prend pas en charge les attributs.
         ''')
     
         with st.expander("Exemple d'élément"):
