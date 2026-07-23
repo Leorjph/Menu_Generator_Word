@@ -13,7 +13,8 @@ uploaded = st.file_uploader(
 stations = {
     'Iron Skillet' : 'iron_skillet',
     'True Balance' : 'true_balance',
-    'Menu of the Day' : 'motd'
+    'Menu of the Day' : 'motd',
+    'Simmer & Thyme' : 'st'
 }
 
 station_name = st.selectbox(
