@@ -175,22 +175,25 @@ def styleDocument(doc, items, type='default', hasTags=True, scale=1):
             set_table_indent(table, 0.5)
         case 'st':
             table = doc.add_table(rows=len(items)+1, cols=4)
+            set_table_indent(table, -0.4)
+            
             text_width = ALIGNMENT[type]['text_width']
             img_width = ALIGNMENT[type]['img_width']
             
+            # First column 
             table.columns[0].width = Inches(text_width)
             for cell in table.columns[0].cells:
                 cell.width = Inches(text_width)
                 
+            # Space between
             table.columns[1].width = Inches(img_width)
             for cell in table.columns[1].cells:
                 cell.width = Inches(img_width)
                 
+            # Second column
             table.columns[2].width = Inches(text_width)
             for cell in table.columns[2].cells:
                 cell.width = Inches(text_width)
-                
-            set_table_indent(table, -0.4)
                 
             p = format_text_paragraphs(table.columns[0].cells[0], spacing = Pt(int(22 * scale)), add_para=True, alignment='center')
             run = p.add_run('\n\n\n\n\n')
