@@ -39,6 +39,13 @@ FONT_PROFILES = {
         'name_en' : {'name' : 'Poppins', 'size' : 11, 'bold' : True, 'color' : RGBColor(0, 0, 0)},
         'ingredients_en' : {'name' : 'Poppins', 'size' : 8, 'bold' : False, 'color' : RGBColor(0, 0, 0)},
         'allergens' : {'name' : 'Poppins', 'size' : 8, 'bold' : False, 'color' : RGBColor(255, 0, 0)}
+    },
+    'st' : {
+        'name_fr' : {'name' : 'Ruda', 'size' : 17, 'bold' : True, 'color' : RGBColor(0, 0, 0)},
+        'ingredients_fr' : {'name' : 'Ruda', 'size' : 10.5, 'bold' : False, 'color' : RGBColor(0, 0, 0)},
+        'name_en' : {'name' : 'Poppins', 'size' : 10.5, 'bold' : True, 'color' : RGBColor(0, 0, 0)},
+        'ingredients_en' : {'name' : 'Poppins', 'size' : 9, 'bold' : False, 'color' : RGBColor(0, 0, 0)},
+        'allergens' : {'name' : 'Poppins', 'size' : 9, 'bold' : False, 'color' : RGBColor(255, 0, 0)}
     }
 }
 
@@ -46,13 +53,15 @@ FONT_PROFILES = {
 TEMPLATES = {
     'iron_skillet' : '/is_template.docx',
     'true_balance' : '/tb_template.docx',
-    'motd' : '/motd_template.docx'
+    'motd' : '/motd_template.docx',
+    'st' : '/st_template.docx'
 }
 
 
 ALIGNMENT = {
     'default' : {'text_width' : 6, 'img_width' : 1.6},
-    'motd' : {'text_width' : 3.5, 'img_width' : 1}
+    'motd' : {'text_width' : 3.5, 'img_width' : 1},
+    'st' : {'text_width' : 2.8, 'img_width' : 1.6}
 }
 
 
@@ -140,95 +149,104 @@ def format_text_paragraphs(text_cell, add_para = True, spacing = Pt(10), space_b
     return text_para
 
 
-def styleDocument(doc, items, type='default', hasTags=True):
+def styleDocument(doc, items, type='default', hasTags=True, scale=1):
 
     section = doc.sections[0]
     
-    if type == 'default':
-        section.left_margin = Inches(1)
-        section.right_margin = Inches(1)
-        section.top_margin = Inches(0.85)
-        section.bottom_margin = Inches(0.9)
-    elif type == 'motd':
-        section.left_margin = Inches(0.7)
-        section.right_margin = Inches(1.8)
-        section.top_margin = Inches(0.85)
-        section.bottom_margin = Inches(0.9)
+    match type:
+        case 'motd':
+            section.left_margin = Inches(0.7)
+            section.right_margin = Inches(1.8)
+            section.top_margin = Inches(0.85)
+            section.bottom_margin = Inches(0.9)
+        case _:
+            section.left_margin = Inches(1)
+            section.right_margin = Inches(1)
+            section.top_margin = Inches(0.85)
+            section.bottom_margin = Inches(0.9)
     
     style = doc.styles['normal']
 
-    if hasTags:
-        table = doc.add_table(rows=len(items)+1, cols=2)
-        set_table_indent(table, -0.5)
+    match type:
+        case 'motd':
+            table = doc.add_table(rows=len(items)+1, cols=1)
+            text_width = ALIGNMENT[type]['text_width'] + ALIGNMENT[type]['img_width']
+            table.columns[0].width = Inches(text_width)
+            set_table_indent(table, 0.5)
+        case 'st':
+            table = doc.add_table(rows=len(items)+1, cols=4)
+            text_width = ALIGNMENT[type]['text_width']
+            img_width = ALIGNMENT[type]['img_width']
+            
+            table.columns[0].width = Inches(text_width)
+            for cell in table.columns[0].cells:
+                cell.width = Inches(text_width)
+                
+            table.columns[1].width = Inches(img_width)
+            for cell in table.columns[1].cells:
+                cell.width = Inches(img_width)
+                
+            table.columns[2].width = Inches(text_width)
+            for cell in table.columns[2].cells:
+                cell.width = Inches(text_width)
+                
+            set_table_indent(table, -0.4)
+                
+            p = format_text_paragraphs(table.columns[0].cells[0], spacing = Pt(int(22 * scale)), add_para=True, alignment='center')
+            run = p.add_run('\n\n\n\n\n')
+        case _:
+            table = doc.add_table(rows=len(items)+1, cols=2)
+            set_table_indent(table, -0.5)
 
-        text_width = ALIGNMENT[type]['text_width']
-        img_width = ALIGNMENT[type]['img_width']
-        # Column 1 for the text
-        table.columns[0].width = Inches(text_width)
-        for cell in table.columns[0].cells:
-            cell.width = Inches(text_width)
-        # Colume 2 for the label images
-        table.columns[1].width = Inches(img_width)
-        for cell in table.columns[1].cells:
-            cell.width = Inches(img_width)
-    else:
-        table = doc.add_table(rows=len(items)+1, cols=1)
-        text_width = ALIGNMENT[type]['text_width'] + ALIGNMENT[type]['img_width']
-        table.columns[0].width = Inches(text_width)
-        set_table_indent(table, 0.5)
+            text_width = ALIGNMENT[type]['text_width']
+            img_width = ALIGNMENT[type]['img_width']
+            # Column 1 for the text
+            table.columns[0].width = Inches(text_width)
+            for cell in table.columns[0].cells:
+                cell.width = Inches(text_width)
+            # Colume 2 for the label images
+            table.columns[1].width = Inches(img_width)
+            for cell in table.columns[1].cells:
+                cell.width = Inches(img_width)
     return table
 
 
 def create_doc(station_name, items, save=False, scale=1):
     doc = Document(template_path + TEMPLATES[station_name])
-
-    hasTags = True
-    if station_name == 'motd':
-        hasTags = False
-        table = styleDocument(doc, items, type='motd', hasTags=hasTags)
-        alignment = 'center'
-    else:
-        table = styleDocument(doc, items)
-        alignment = 'left'
-
-    for i, item in enumerate(items):
-        text_cell = table.cell(i+1, 0)
-        if hasTags:
-            image_cell = table.cell(i+1, 1)
-        print(f"Generating item {i+1}")
-
+    
+    def add_name_fr(item, text_cell):
         if item['name']:
             p = format_text_paragraphs(text_cell, spacing = Pt(int(22 * scale)), add_para=False, alignment=alignment)
             name_fr = GoogleTranslator(source="auto", target="fr").translate(item['name'])
             run = p.add_run(name_fr)
             apply_font_profile(run, 'name_fr', scale=scale, station_name=station_name)
-
-        if station_name == 'motd':
-            if item['name']:
-                p = format_text_paragraphs(text_cell, spacing = Pt(int(15 * scale)), alignment=alignment)
-                name_en = GoogleTranslator(source="auto", target="en").translate(item['name'])
-                run = p.add_run(name_en)
-                apply_font_profile(run, 'name_en', scale=scale, station_name=station_name)
-                
+    
+    
+    def add_name_en(item, text_cell):
+        if item['name']:
+            p = format_text_paragraphs(text_cell, spacing = Pt(int(15 * scale)), alignment=alignment)
+            name_en = GoogleTranslator(source="auto", target="en").translate(item['name'])
+            run = p.add_run(name_en)
+            apply_font_profile(run, 'name_en', scale=scale, station_name=station_name)
+    
+    
+    def add_ingredients_fr(item, text_cell):
         if item['ingredients']:
             p = format_text_paragraphs(text_cell, spacing = Pt(int(13 * scale)), alignment=alignment)
             ingredients_fr = GoogleTranslator(source="auto", target="fr").translate(item['ingredients'])
             run = p.add_run(ingredients_fr)
             apply_font_profile(run, 'ingredients_fr', scale=scale, station_name=station_name)
-
-        if station_name != 'motd':
-            if item['name']:
-                p = format_text_paragraphs(text_cell, spacing = Pt(int(15 * scale)), alignment=alignment)
-                name_en = GoogleTranslator(source="auto", target="en").translate(item['name'])
-                run = p.add_run(name_en)
-                apply_font_profile(run, 'name_en', scale=scale, station_name=station_name)
-
+            
+    
+    def add_ingredients_en(item, text_cell):
         if item['ingredients']:
             p = format_text_paragraphs(text_cell, spacing = Pt(int(11 * scale)), alignment=alignment)
             ingredients_en = GoogleTranslator(source="auto", target="en").translate(item['ingredients'])
             run = p.add_run(ingredients_en)
             apply_font_profile(run, 'ingredients_en', scale=scale, station_name=station_name)
-        
+    
+    
+    def add_allergens(item, text_cell, hasTags):
         if item['allergens']:
             if hasTags:
                 inner_table = text_cell.add_table(rows=1, cols=2)
@@ -252,40 +270,95 @@ def create_doc(station_name, items, save=False, scale=1):
             allergens_fr = GoogleTranslator(source="en", target="fr").translate(allergens)
             run = p.add_run(f'{allergens} / {allergens_fr}')
             apply_font_profile(run, 'allergens', scale=scale, station_name=station_name)
+    
 
-        if hasTags and item['tags']:
-            add_tags(image_cell, item['tags'], text_cell, scale=scale)
+    hasTags = True
+    if station_name == 'motd' or station_name == 'st':
+        hasTags = False
+        table = styleDocument(doc, items, type=station_name, hasTags=hasTags, scale=scale)
+        alignment = 'center'
+    else:
+        table = styleDocument(doc, items)
+        alignment = 'left'
+
+    for i, item in enumerate(items):
+        text_cell = table.cell(i+1, 0)
+        if hasTags:
+            image_cell = table.cell(i+1, 1)
+        print(f"Generating item {i+1}")
+
+        match station_name:
+            case 'motd':
+                add_name_fr(item, text_cell)
+                add_name_en(item, text_cell)
+                add_ingredients_fr(item, text_cell)
+                add_ingredients_en(item, text_cell)
+                add_allergens(item, text_cell, hasTags)
+                
+            case 'st':
+                add_name_fr(item, text_cell)
+                add_ingredients_fr(item, text_cell)
+                add_name_en(item, text_cell)
+                add_ingredients_en(item, text_cell)
+                add_allergens(item, text_cell, hasTags)
+                if item['tags']:
+                    add_tags(text_cell, item['tags'], text_cell, scale=scale, alignment=alignment)
+                text_cell = table.cell(i+1, 2)
+                add_name_fr(item, text_cell)
+                add_ingredients_fr(item, text_cell)
+                add_name_en(item, text_cell)
+                add_ingredients_en(item, text_cell)
+                add_allergens(item, text_cell, hasTags)
+                if item['tags']:
+                    add_tags(text_cell, item['tags'], text_cell, scale=scale, alignment=alignment)
+                    
+            case _:
+                add_name_fr(item, text_cell)
+                add_ingredients_fr(item, text_cell)
+                add_name_en(item, text_cell)
+                add_ingredients_en(item, text_cell)
+                add_allergens(item, text_cell, hasTags)
+                if item['tags']:
+                    add_tags(image_cell, item['tags'], text_cell, scale=scale, alignment=alignment)
 
     if save:
         doc.save(io_folder + output_file_name)
     return doc
 
 
-def add_tags(cell, tags, text_cell, scale=1):
+def add_tags(cell, tags, text_cell, scale=1, alignment='left'):
     tag_list = tags.split(',')
     
-    rows = 1
-    if len(tag_list) > 3:
-        rows = 2
-    cols = 3
-    table = cell.add_table(rows=rows, cols=cols)
-    for i in range(cols):
-        table.columns[i].width = Inches(IMG_WIDTH/cols)
-        for cell in table.columns[i].cells:
-            cell.width = Inches(IMG_WIDTH/cols)
+    if alignment == 'left':
+        rows = 1
+        if len(tag_list) > 3:
+            rows = 2
+        cols = 3
+        table = cell.add_table(rows=rows, cols=cols)
+        for i in range(cols):
+            table.columns[i].width = Inches(IMG_WIDTH/cols)
+            for cell in table.columns[i].cells:
+                cell.width = Inches(IMG_WIDTH/cols)
+    elif alignment == 'center':
+        p = format_text_paragraphs(cell, add_para = True, spacing = Inches(1.5 * scale), alignment=alignment)
+        scale *= 1.5
     
     for i, tag in enumerate(tag_list[:9]):
         img_path = TAGS.get(tag.strip(), None)
         if img_path:
             try:
-                p = format_text_paragraphs(table.cell(int(i/cols), i%cols), add_para = False, spacing = Inches(0.55 * scale))
-                run = p.add_run()
+                if alignment == 'left':
+                    p = format_text_paragraphs(table.cell(int(i/cols), i%cols), add_para = False, spacing = Inches(0.55 * scale))
+                    run = p.add_run()
+                else:
+                    run = p.add_run(' ')
                 run.add_picture(image_path + img_path, width=Inches(0.4 * scale))
             except FileNotFoundError:
                 print(f"Error: File {img_path} not found")
                 
-    cell.paragraphs[-1].add_run(' ').font.size = Pt(1)
-    text_cell.paragraphs[-1].add_run(' ').font.size = Pt(1)
+    if alignment == 'left':
+        cell.paragraphs[-1].add_run(' ').font.size = Pt(1)
+        text_cell.paragraphs[-1].add_run(' ').font.size = Pt(1)
 
 
 if __name__ == '__main__':
