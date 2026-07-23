@@ -20,7 +20,7 @@ stations = {
 station_name = st.selectbox(
     "Select station: ",
     list(stations.keys()),
-    index=0
+    index=2
 )
 
 scale = st.number_input(
