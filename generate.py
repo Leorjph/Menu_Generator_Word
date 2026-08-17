@@ -214,13 +214,26 @@ def styleDocument(doc, items, type='default', hasTags=True, scale=1):
     return table
 
 
+def translate(text, language, source='auto', maxAttempts = 3):
+    attempts = 0
+    while True:
+        result = GoogleTranslator(source=source, target=language).translate(text)
+        if result.startswith("Error"):
+            if attempts < maxAttempts:
+                attempts += 1
+            else:
+                return result
+        else:
+            return result
+        
+
 def create_doc(station_name, items, save=False, scale=1):
     doc = Document(template_path + TEMPLATES[station_name])
     
     def add_name_fr(item, text_cell):
         if item['name']:
             p = format_text_paragraphs(text_cell, spacing = Pt(int(22 * scale)), add_para=False, alignment=alignment)
-            name_fr = GoogleTranslator(source="auto", target="fr").translate(item['name'])
+            name_fr = translate(item["name"], language='fr')
             run = p.add_run(name_fr)
             apply_font_profile(run, 'name_fr', scale=scale, station_name=station_name)
     
@@ -228,7 +241,7 @@ def create_doc(station_name, items, save=False, scale=1):
     def add_name_en(item, text_cell):
         if item['name']:
             p = format_text_paragraphs(text_cell, spacing = Pt(int(15 * scale)), alignment=alignment)
-            name_en = GoogleTranslator(source="auto", target="en").translate(item['name'])
+            name_en = translate(item["name"], language='en')
             run = p.add_run(name_en)
             apply_font_profile(run, 'name_en', scale=scale, station_name=station_name)
     
@@ -236,7 +249,7 @@ def create_doc(station_name, items, save=False, scale=1):
     def add_ingredients_fr(item, text_cell):
         if item['ingredients']:
             p = format_text_paragraphs(text_cell, spacing = Pt(int(13 * scale)), alignment=alignment)
-            ingredients_fr = GoogleTranslator(source="auto", target="fr").translate(item['ingredients'])
+            ingredients_fr = translate(item['ingredients'], language='fr')
             run = p.add_run(ingredients_fr)
             apply_font_profile(run, 'ingredients_fr', scale=scale, station_name=station_name)
             
@@ -244,7 +257,7 @@ def create_doc(station_name, items, save=False, scale=1):
     def add_ingredients_en(item, text_cell):
         if item['ingredients']:
             p = format_text_paragraphs(text_cell, spacing = Pt(int(11 * scale)), alignment=alignment)
-            ingredients_en = GoogleTranslator(source="auto", target="en").translate(item['ingredients'])
+            ingredients_en = translate(item['ingredients'], language='en')
             run = p.add_run(ingredients_en)
             apply_font_profile(run, 'ingredients_en', scale=scale, station_name=station_name)
     
@@ -269,8 +282,8 @@ def create_doc(station_name, items, save=False, scale=1):
             else:
                 p = format_text_paragraphs(text_cell, spacing = Pt(int(11 * scale)), alignment=alignment)
             run = p.add_run()
-            allergens = item['allergens']
-            allergens_fr = GoogleTranslator(source="en", target="fr").translate(allergens)
+            allergens = translate(item['allergens'], language='en')
+            allergens_fr = translate(item['allergens'], language='fr')
             run = p.add_run(f'{allergens} / {allergens_fr}')
             apply_font_profile(run, 'allergens', scale=scale, station_name=station_name)
     
@@ -336,7 +349,9 @@ def add_tags(cell, tags, text_cell, scale=1, alignment='left'):
         rows = 1
         if len(tag_list) > 3:
             rows = 2
-        cols = 3
+            cols = 3
+        else:
+            cols = len(tag_list)
         table = cell.add_table(rows=rows, cols=cols)
         for i in range(cols):
             table.columns[i].width = Inches(IMG_WIDTH/cols)
@@ -346,12 +361,14 @@ def add_tags(cell, tags, text_cell, scale=1, alignment='left'):
         p = format_text_paragraphs(cell, add_para = True, spacing = Inches(1.5 * scale), alignment=alignment)
         scale *= 1.5
     
+    scaleByCols = {1 : 2.1, 2: 1.75, 3 : 1}
+    scale *=  scaleByCols.get(cols, 1)
     for i, tag in enumerate(tag_list[:9]):
         img_path = TAGS.get(tag.strip(), None)
         if img_path:
             try:
                 if alignment == 'left':
-                    p = format_text_paragraphs(table.cell(int(i/cols), i%cols), add_para = False, spacing = Inches(0.55 * scale))
+                    p = format_text_paragraphs(table.cell(int(i/cols), i%cols), add_para = False, spacing = Inches((0.6 * scale)))
                     run = p.add_run()
                 else:
                     run = p.add_run(' ')
@@ -366,6 +383,6 @@ def add_tags(cell, tags, text_cell, scale=1, alignment='left'):
 
 if __name__ == '__main__':
     items = parse_text()
-    station_name = 'motd'
+    station_name = 'true_balance'
     create_doc(station_name, items, save=True)
     print(f"\nSuccessfully generated {output_file_name}\n")
