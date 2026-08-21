@@ -38,7 +38,7 @@ if st.button("Generate Menu"):
         filename = ''.join(uploaded.name.split('.')[:-1])
             
         items = parse_text(StringIO(text))
-        output_doc = create_doc(station_name, items, scale)
+        output_doc = create_doc(station_name, items, scale=scale)
         
         output = BytesIO()
         output_doc.save(output)
