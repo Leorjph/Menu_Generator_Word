@@ -361,7 +361,7 @@ def add_tags(cell, tags, text_cell, scale=1, alignment='left'):
         p = format_text_paragraphs(cell, add_para = True, spacing = Inches(1.5 * scale), alignment=alignment)
         scale *= 1.5
     
-    scaleByCols = {1 : 2.1, 2: 1.75, 3 : 1}
+    scaleByCols = {1 : 1.75, 2: 1.5, 3 : 1}
     scale *=  scaleByCols.get(cols, 1)
     for i, tag in enumerate(tag_list[:9]):
         img_path = TAGS.get(tag.strip(), None)
@@ -377,12 +377,13 @@ def add_tags(cell, tags, text_cell, scale=1, alignment='left'):
                 print(f"Error: File {img_path} not found")
                 
     if alignment == 'left':
-        cell.paragraphs[-1].add_run(' ').font.size = Pt(1)
-        text_cell.paragraphs[-1].add_run(' ').font.size = Pt(1)
+        #cell.paragraphs[-1].add_run(' ').font.size = Pt(1)
+        #text_cell.paragraphs[-1].add_run(' ').font.size = Pt(1)
+        pass
 
 
 if __name__ == '__main__':
     items = parse_text()
-    station_name = 'true_balance'
+    station_name = 'iron_skillet'
     create_doc(station_name, items, save=True)
     print(f"\nSuccessfully generated {output_file_name}\n")
