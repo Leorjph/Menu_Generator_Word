@@ -86,9 +86,9 @@ with st.sidebar.expander("? - Help / Aide"):
             Contains: Lactose  
               
             2. Vegan item without ingredients or allergens  
-            -  
+            \-  
             v  
-            -  
+            \-  
             ''')
     elif language == "Français":
         st.subheader("Format de fichier texte")
@@ -115,9 +115,9 @@ with st.sidebar.expander("? - Help / Aide"):
             Contient: lactose  
               
             2. Élément végétalien sans ingrédients ni allergènes  
-            -  
+            \-  
             v  
-            -  
+            \-  
             ''')
     
     with st.expander("Tags List"):
