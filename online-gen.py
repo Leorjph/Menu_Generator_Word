@@ -35,7 +35,7 @@ if st.button("Generate Menu"):
     if uploaded:
         text = uploaded.read().decode("utf-8")
         station_name = stations[station_name]
-        filename = uploaded.name.split('.')[0]
+        filename = uploaded.name.split('.')[:-1]
             
         items = parse_text(StringIO(text))
         output_doc = create_doc(station_name, items, scale)
