@@ -5,7 +5,7 @@ from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
 from io import StringIO
 import re
-from deep_translator import GoogleTranslator
+from deep_translator import GoogleTranslator, MyMemoryTranslator
 
 
 textfile_path = 'menu.txt'
@@ -214,11 +214,21 @@ def styleDocument(doc, items, type='default', hasTags=True, scale=1):
     return table
 
 
-def translate(text, language, source='auto', maxAttempts = 3):
+def translate(text, language, source='auto', maxAttempts = 6):
     attempts = 0
+    translator = GoogleTranslator
     while True:
-        result = GoogleTranslator(source=source, target=language).translate(text)
+        result = translator(source=source, target=language).translate(text)
         if result.startswith("Error"):
+            if attempts == int(maxAttempts/2):
+                print("Failed translation, attempting with fallback translator")
+                translator = MyMemoryTranslator
+                if language == 'fr':
+                    source = 'en-CA'
+                    language = 'fr-CA'
+                elif language == 'en':
+                    source = 'fr-CA'
+                    language = 'en-CA'
             if attempts < maxAttempts:
                 attempts += 1
             else:
