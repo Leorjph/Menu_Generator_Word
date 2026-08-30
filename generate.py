@@ -372,7 +372,8 @@ def add_tags(cell, tags, text_cell, scale=1, alignment='left'):
         scale *= 1.5
     
     scaleByCols = {1 : 1.75, 2: 1.5, 3 : 1}
-    scale *=  scaleByCols.get(cols, 1)
+    if alignment == 'left':
+        scale *=  scaleByCols.get(cols, 1)
     for i, tag in enumerate(tag_list[:9]):
         img_path = TAGS.get(tag.strip(), None)
         if img_path:
