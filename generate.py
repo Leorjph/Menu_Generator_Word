@@ -214,9 +214,15 @@ def styleDocument(doc, items, type='default', hasTags=True, scale=1):
     return table
 
 
-def translate(text, language, source='auto', maxAttempts = 6):
+def translate(text, language, source='auto', maxAttempts = 0):
     attempts = 0
-    translator = GoogleTranslator
+    translator = MyMemoryTranslator
+    if language == 'fr':
+        source = 'en-CA'
+        language = 'fr-CA'
+    elif language == 'en':
+        source = 'fr-CA'
+        language = 'en-CA'
     while True:
         result = translator(source=source, target=language).translate(text)
         if result.startswith("Error"):
