@@ -214,17 +214,18 @@ def styleDocument(doc, items, type='default', hasTags=True, scale=1):
     return table
 
 
-def translate(text, language, source='auto', maxAttempts = 0):
+def translate(text, language, source='auto', maxAttempts = 6):
     attempts = 0
-    translator = MyMemoryTranslator
-    if language == 'fr':
-        source = 'en-CA'
-        language = 'fr-CA'
-    elif language == 'en':
-        source = 'fr-CA'
-        language = 'en-CA'
+    translator = GoogleTranslator
     while True:
-        result = translator(source=source, target=language).translate(text)
+        try:
+            result = translator(source=source, target=language).translate(text)
+        except TooManyRequests:
+            attempts += 1
+            if attempts < maxAttempts:
+                    continue
+            else:
+                    return "Translation error"
         if result.startswith("Error"):
             if attempts == int(maxAttempts/2):
                 print("Failed translation, attempting with fallback translator")
