@@ -219,6 +219,7 @@ def translate(text, language, source='auto', maxAttempts = 6):
     translator = GoogleTranslator
     print("Attempt ", attempts)
     while True:
+        attempts += 1
         try:
             result = translator(source=source, target=language).translate(text)
         except Exception as e:
@@ -236,9 +237,7 @@ def translate(text, language, source='auto', maxAttempts = 6):
                 elif language == 'en':
                     source = 'fr-CA'
                     language = 'en-CA'
-            if attempts < maxAttempts:
-                attempts += 1
-            else:
+            if attempts > maxAttempts:
                 return result
         else:
             return result
