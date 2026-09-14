@@ -220,7 +220,7 @@ def translate(text, language, source='auto', maxAttempts = 6):
     while True:
         try:
             result = translator(source=source, target=language).translate(text)
-        except TooManyRequests:
+        except Exception as e:
             attempts += 1
             if attempts < maxAttempts:
                     continue
