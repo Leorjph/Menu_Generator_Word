@@ -217,9 +217,9 @@ def styleDocument(doc, items, type='default', hasTags=True, scale=1):
 def translate(text, language, source='auto', maxAttempts = 6):
     attempts = 0
     translator = GoogleTranslator
+    print("Attempt ", attempts)
     while True:
         try:
-            print("Attempt ", attempts)
             result = translator(source=source, target=language).translate(text)
         except Exception as e:
             print(e)
