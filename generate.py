@@ -221,10 +221,8 @@ def translate(text, language, source='auto', maxAttempts = 6):
         try:
             result = translator(source=source, target=language).translate(text)
         except Exception as e:
-            attempts += 1
-            if attempts < maxAttempts:
-                    continue
-            else:
+            result = "Error"
+            if attempts > maxAttempts:
                     return "Translation error"
         if result.startswith("Error"):
             if attempts == int(maxAttempts/2):
