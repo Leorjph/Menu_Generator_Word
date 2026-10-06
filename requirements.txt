@@ -1,3 +1,4 @@
 streamlit
 python-docx
 deep_translator
+deepl
