@@ -5,7 +5,9 @@ from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
 from io import StringIO
 import re
+import time
 from deep_translator import MyMemoryTranslator
+import deepl
 
 
 textfile_path = 'menu.txt'
@@ -214,18 +216,32 @@ def styleDocument(doc, items, type='default', hasTags=True, scale=1):
     return table
 
 
-def translate(text, language, source='auto', maxAttempts = 6):
+def translate(text, language, source='auto', maxAttempts = 6, deepl_access_token=None):
     attempts = 0
+    
+    while attempts < maxAttempts/2:
+        attempts += 1
+        if deepl_access_token:
+            translator = deepl.Translator(deepl_access_token)
+            result = translator.translate_text(text, target_lang=language)
+            if str(result).lower().startswith("error"):
+                print("Error using primary translator")
+                time.sleep(1)
+                continue
+        else:
+            break
+    
     translator = MyMemoryTranslator
-    if language == 'fr':
+    if language == 'FR-CA':
         source = 'en-CA'
         language = 'fr-CA'
-    elif language == 'en':
+    elif language == 'EN-GB':
         source = 'fr-CA'
         language = 'en-CA'
     while True:
         attempts += 1
         result = translator(source=source, target=language).translate(text)
+        time.sleep(1)
         if result.startswith("Error"):
             if attempts > maxAttempts:
                 return result
@@ -233,13 +249,13 @@ def translate(text, language, source='auto', maxAttempts = 6):
             return result
         
 
-def create_doc(station_name, items, save=False, scale=1):
+def create_doc(station_name, items, save=False, scale=1, deepl_access_token=None):
     doc = Document(template_path + TEMPLATES[station_name])
     
     def add_name_fr(item, text_cell):
         if item['name']:
             p = format_text_paragraphs(text_cell, spacing = Pt(int(22 * scale)), add_para=False, alignment=alignment)
-            name_fr = translate(item["name"], language='fr')
+            name_fr = translate(item["name"], language='FR-CA', deepl_access_token=deepl_access_token)
             run = p.add_run(name_fr)
             apply_font_profile(run, 'name_fr', scale=scale, station_name=station_name)
     
@@ -247,7 +263,7 @@ def create_doc(station_name, items, save=False, scale=1):
     def add_name_en(item, text_cell):
         if item['name']:
             p = format_text_paragraphs(text_cell, spacing = Pt(int(15 * scale)), alignment=alignment)
-            name_en = translate(item["name"], language='en')
+            name_en = translate(item["name"], language='EN-GB', deepl_access_token=deepl_access_token)
             run = p.add_run(name_en)
             apply_font_profile(run, 'name_en', scale=scale, station_name=station_name)
     
@@ -255,7 +271,7 @@ def create_doc(station_name, items, save=False, scale=1):
     def add_ingredients_fr(item, text_cell):
         if item['ingredients']:
             p = format_text_paragraphs(text_cell, spacing = Pt(int(13 * scale)), alignment=alignment)
-            ingredients_fr = translate(item['ingredients'], language='fr')
+            ingredients_fr = translate(item['ingredients'], language='FR-CA', deepl_access_token=deepl_access_token)
             run = p.add_run(ingredients_fr)
             apply_font_profile(run, 'ingredients_fr', scale=scale, station_name=station_name)
             
@@ -263,7 +279,7 @@ def create_doc(station_name, items, save=False, scale=1):
     def add_ingredients_en(item, text_cell):
         if item['ingredients']:
             p = format_text_paragraphs(text_cell, spacing = Pt(int(11 * scale)), alignment=alignment)
-            ingredients_en = translate(item['ingredients'], language='en')
+            ingredients_en = translate(item['ingredients'], language='EN-GB', deepl_access_token=deepl_access_token)
             run = p.add_run(ingredients_en)
             apply_font_profile(run, 'ingredients_en', scale=scale, station_name=station_name)
     
@@ -288,8 +304,8 @@ def create_doc(station_name, items, save=False, scale=1):
             else:
                 p = format_text_paragraphs(text_cell, spacing = Pt(int(11 * scale)), alignment=alignment)
             run = p.add_run()
-            allergens = translate(item['allergens'], language='en')
-            allergens_fr = translate(item['allergens'], language='fr')
+            allergens = translate(item['allergens'], language='EN-GB', deepl_access_token=deepl_access_token)
+            allergens_fr = translate(item['allergens'], language='FR-CA', deepl_access_token=deepl_access_token)
             run = p.add_run(f'{allergens} / {allergens_fr}')
             apply_font_profile(run, 'allergens', scale=scale, station_name=station_name)
     
@@ -391,6 +407,6 @@ def add_tags(cell, tags, text_cell, scale=1, alignment='left'):
 
 if __name__ == '__main__':
     items = parse_text()
-    station_name = 'iron_skillet'
+    station_name = 'motd'
     create_doc(station_name, items, save=True)
     print(f"\nSuccessfully generated {output_file_name}\n")
