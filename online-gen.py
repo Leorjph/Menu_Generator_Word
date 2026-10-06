@@ -4,6 +4,7 @@ from io import BytesIO, StringIO
 
 st.title("Text to Docx Menu Generator")
 filename = None
+deepl_access_token = st.secrets["DEEPL_API_KEY"]
 
 uploaded = st.file_uploader(
     "Upload text file",
@@ -38,7 +39,7 @@ if st.button("Generate Menu"):
         filename = ''.join(uploaded.name.split('.')[:-1])
             
         items = parse_text(StringIO(text))
-        output_doc = create_doc(station_name, items, scale=scale)
+        output_doc = create_doc(station_name, items, scale=scale, deepl_access_token=deepl_access_token)
         
         output = BytesIO()
         output_doc.save(output)
