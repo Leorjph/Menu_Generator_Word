@@ -225,11 +225,13 @@ def translate(text, language, source='auto', maxAttempts = 6, deepl_access_token
             translator = deepl.Translator(deepl_access_token)
             result = translator.translate_text(text, target_lang=language)
             if str(result).lower().startswith("error"):
-                print("Error using primary translator")
                 time.sleep(1)
                 continue
         else:
+            print("No access token provided")
             break
+    else:
+        print("Error using primary translator")
     
     translator = MyMemoryTranslator
     if language == 'FR-CA':
@@ -241,7 +243,6 @@ def translate(text, language, source='auto', maxAttempts = 6, deepl_access_token
     while True:
         attempts += 1
         result = translator(source=source, target=language).translate(text)
-        time.sleep(1)
         if result.startswith("Error"):
             if attempts > maxAttempts:
                 return result
