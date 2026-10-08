@@ -5,6 +5,7 @@ from io import BytesIO, StringIO
 st.title("Text to Docx Menu Generator")
 filename = None
 deepl_access_token = st.secrets["DEEPL_API_KEY"]
+print(f"Access key received: {deepl_access_token[:2]}..{deepl_access_token[-2:]}")
 
 uploaded = st.file_uploader(
     "Upload text file",
