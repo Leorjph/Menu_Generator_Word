@@ -231,7 +231,7 @@ def translate(text, language, source='auto', maxAttempts = 6, deepl_access_token
             print("No access token provided")
             break
     else:
-        print(f"Error using primary translator with access token {deepl_access_token[:2]}..{deepl_access_token[:2]}")
+        print(f"Error using primary translator with access token {deepl_access_token[:2]}..{deepl_access_token[-2:]}")
     
     translator = MyMemoryTranslator
     if language == 'FR-CA':
