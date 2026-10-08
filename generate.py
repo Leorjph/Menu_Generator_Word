@@ -227,6 +227,7 @@ def translate(text, language, source='auto', maxAttempts = 6, deepl_access_token
             if str(result).lower().startswith("error"):
                 time.sleep(1)
                 continue
+            return str(result)
         else:
             print("No access token provided")
             break
