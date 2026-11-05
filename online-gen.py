@@ -15,7 +15,8 @@ stations = {
     'Iron Skillet' : 'iron_skillet',
     'True Balance' : 'true_balance',
     'Menu of the Day' : 'motd',
-    'Simmer & Thyme' : 'st'
+    'Simmer & Thyme' : 'st',
+    'Sweet Pickles' : 'sp'
 }
 
 station_name = st.selectbox(
