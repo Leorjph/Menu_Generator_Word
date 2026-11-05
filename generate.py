@@ -48,6 +48,13 @@ FONT_PROFILES = {
         'name_en' : {'name' : 'Poppins', 'size' : 10.5, 'bold' : True, 'color' : RGBColor(0, 0, 0)},
         'ingredients_en' : {'name' : 'Poppins', 'size' : 9, 'bold' : False, 'color' : RGBColor(0, 0, 0)},
         'allergens' : {'name' : 'Poppins', 'size' : 9, 'bold' : False, 'color' : RGBColor(255, 0, 0)}
+    },
+    'sp' : {
+        'name_fr' : {'name' : 'Ruda', 'size' : 17, 'bold' : True, 'color' : RGBColor(0, 0, 0)},
+        'ingredients_fr' : {'name' : 'Ruda', 'size' : 10.5, 'bold' : False, 'color' : RGBColor(0, 0, 0)},
+        'name_en' : {'name' : 'Poppins', 'size' : 10.5, 'bold' : True, 'color' : RGBColor(0, 0, 0)},
+        'ingredients_en' : {'name' : 'Poppins', 'size' : 9, 'bold' : False, 'color' : RGBColor(0, 0, 0)},
+        'allergens' : {'name' : 'Poppins', 'size' : 9, 'bold' : False, 'color' : RGBColor(255, 0, 0)}
     }
 }
 
@@ -56,14 +63,16 @@ TEMPLATES = {
     'iron_skillet' : '/is_template.docx',
     'true_balance' : '/tb_template.docx',
     'motd' : '/motd_template.docx',
-    'st' : '/st_template.docx'
+    'st' : '/st_template.docx',
+    'sp' : '/sp_template.docx'
 }
 
 
 ALIGNMENT = {
     'default' : {'text_width' : 6, 'img_width' : 1.6},
     'motd' : {'text_width' : 3.5, 'img_width' : 1},
-    'st' : {'text_width' : 2.8, 'img_width' : 1.6}
+    'st' : {'text_width' : 2.8, 'img_width' : 1.6},
+    'sp' : {'text_width' : 2.8, 'img_width' : 1.6}
 }
 
 
@@ -175,7 +184,7 @@ def styleDocument(doc, items, type='default', hasTags=True, scale=1):
             text_width = ALIGNMENT[type]['text_width'] + ALIGNMENT[type]['img_width']
             table.columns[0].width = Inches(text_width)
             set_table_indent(table, 0.5)
-        case 'st':
+        case 'st' | 'sp':
             table = doc.add_table(rows=len(items)+1, cols=4)
             set_table_indent(table, -0.4)
             
@@ -218,7 +227,6 @@ def styleDocument(doc, items, type='default', hasTags=True, scale=1):
 
 def translate(text, language, source='auto', maxAttempts = 6, deepl_access_token=None):
     attempts = 0
-    
     while attempts < maxAttempts/2:
         attempts += 1
         if deepl_access_token:
@@ -313,7 +321,7 @@ def create_doc(station_name, items, save=False, scale=1, deepl_access_token=None
     
 
     hasTags = True
-    if station_name == 'motd' or station_name == 'st':
+    if station_name == 'motd' or station_name == 'st' or station_name == 'sp':
         hasTags = False
         table = styleDocument(doc, items, type=station_name, hasTags=hasTags, scale=scale)
         alignment = 'center'
@@ -323,6 +331,8 @@ def create_doc(station_name, items, save=False, scale=1, deepl_access_token=None
 
     for i, item in enumerate(items):
         text_cell = table.cell(i+1, 0)
+        if station_name == 'sp':
+            text_cell = table.cell(int(i/2)+1, int(3*i/2 + 0.5))
         if hasTags:
             image_cell = table.cell(i+1, 1)
         print(f"Generating item {i+1}")
@@ -344,6 +354,15 @@ def create_doc(station_name, items, save=False, scale=1, deepl_access_token=None
                 if item['tags']:
                     add_tags(text_cell, item['tags'], text_cell, scale=scale, alignment=alignment)
                 text_cell = table.cell(i+1, 2)
+                add_name_fr(item, text_cell)
+                add_ingredients_fr(item, text_cell)
+                add_name_en(item, text_cell)
+                add_ingredients_en(item, text_cell)
+                add_allergens(item, text_cell, hasTags)
+                if item['tags']:
+                    add_tags(text_cell, item['tags'], text_cell, scale=scale, alignment=alignment)
+                    
+            case 'sp':
                 add_name_fr(item, text_cell)
                 add_ingredients_fr(item, text_cell)
                 add_name_en(item, text_cell)
@@ -409,6 +428,6 @@ def add_tags(cell, tags, text_cell, scale=1, alignment='left'):
 
 if __name__ == '__main__':
     items = parse_text()
-    station_name = 'motd'
+    station_name = 'sp'
     create_doc(station_name, items, save=True)
     print(f"\nSuccessfully generated {output_file_name}\n")
